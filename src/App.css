@@ -312,6 +312,15 @@ body {
   box-sizing: border-box;
 }
 
+/* Texte d'aide pour les explications */
+.help-text {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-top: 8px;
+  margin-bottom: 0;
+  line-height: 1.4;
+  font-style: italic;
+}
 
 .form-group input::placeholder {
   color: #8e8e93;

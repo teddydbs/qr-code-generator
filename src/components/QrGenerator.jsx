@@ -878,6 +878,10 @@ function QrGenerator() {
                   <option value="Q">Élevé (Q)</option>
                   <option value="H">Maximum (H)</option>
                 </select>
+                <p className="help-text">
+                  Permet au QR code de rester lisible même s'il est partiellement endommagé ou flou. 
+                  Plus le niveau est élevé, plus le QR code résiste aux dégâts mais devient plus dense.
+                </p>
               </div>
             </div>
           </div>
