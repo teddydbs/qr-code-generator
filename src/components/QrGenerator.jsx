@@ -218,12 +218,36 @@ function QrGenerator() {
     }
   }, [options.size])
 
-  // Mise à jour immédiate de la marge - Sans debounce pour test
+  // Régénération complète pour la marge - Force la mise à jour
   useEffect(() => {
-    if (qrCode.current) {
-      qrCode.current.update({
-        margin: options.margin
-      })
+    if (qrCode.current && qrRef.current) {
+      // Régénération complète du QR code avec la nouvelle marge
+      const qrConfig = {
+        width: options.size,
+        height: options.size,
+        data: generatedValue,
+        margin: options.margin,
+        dotsOptions: {
+          ...dotsColorConfig,
+          type: options.dotsType
+        },
+        backgroundOptions: backgroundColorConfig,
+        cornersSquareOptions: {
+          type: options.cornersSquareType,
+          color: options.cornersSquareColor
+        },
+        cornersDotOptions: {
+          type: options.cornersDotType,
+          color: options.cornersDotColor
+        },
+        qrOptions: {
+          errorCorrectionLevel: options.errorCorrectionLevel
+        }
+      }
+      
+      qrCode.current = new QRCodeStyling(qrConfig)
+      qrRef.current.innerHTML = ''
+      qrCode.current.append(qrRef.current)
     }
   }, [options.margin])
 
