@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import QRCodeStyling from 'qr-code-styling'
 
 function QrGenerator() {
@@ -100,8 +100,8 @@ function QrGenerator() {
     }))
   }
 
-  // Fonctions pour obtenir les configurations de couleurs
-  const getDotsColorConfig = () => {
+  // Configurations de couleurs optimisées avec useMemo
+  const dotsColorConfig = useMemo(() => {
     if (options.dotsGradientType === 'none') {
       return { color: options.fgColor }
     } else {
@@ -116,9 +116,9 @@ function QrGenerator() {
         }
       }
     }
-  }
+  }, [options.dotsGradientType, options.fgColor, options.dotsGradientColor1, options.dotsGradientColor2])
 
-  const getBackgroundColorConfig = () => {
+  const backgroundColorConfig = useMemo(() => {
     if (options.backgroundGradientType === 'none') {
       return { color: options.bgColor }
     } else {
@@ -133,14 +133,11 @@ function QrGenerator() {
         }
       }
     }
-  }
+  }, [options.backgroundGradientType, options.bgColor, options.backgroundGradientColor1, options.backgroundGradientColor2])
 
 
   // Initialiser le QR code avec les nouvelles options
   useEffect(() => {
-    const dotsColorConfig = getDotsColorConfig()
-    const backgroundColorConfig = getBackgroundColorConfig()
-    
     const qrConfig = {
       width: options.size,
       height: options.size,
@@ -175,9 +172,6 @@ function QrGenerator() {
   // Mettre à jour le QR code - Changements lourds (contenu, couleurs, styles)
   useEffect(() => {
     if (qrCode.current) {
-      const dotsColorConfig = getDotsColorConfig()
-      const backgroundColorConfig = getBackgroundColorConfig()
-      
       qrCode.current.update({
         data: generatedValue,
         margin: options.margin,
@@ -202,20 +196,14 @@ function QrGenerator() {
   }, [
     generatedValue, 
     options.margin,
-    options.fgColor,
-    options.bgColor,
     options.dotsType,
     options.cornersSquareType,
     options.cornersDotType,
-    options.dotsGradientType,
-    options.dotsGradientColor1,
-    options.dotsGradientColor2,
     options.cornersSquareColor,
     options.cornersDotColor,
-    options.backgroundGradientType,
-    options.backgroundGradientColor1,
-    options.backgroundGradientColor2,
-    options.errorCorrectionLevel
+    options.errorCorrectionLevel,
+    dotsColorConfig,
+    backgroundColorConfig
   ])
 
   // Mettre à jour la taille seulement - Changement léger et fluide
