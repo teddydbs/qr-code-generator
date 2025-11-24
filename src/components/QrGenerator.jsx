@@ -639,7 +639,7 @@ function QrGenerator() {
                       id="border-width"
                       type="range"
                       min="2"
-                      max="10"
+                      max="12"
                       value={options.borderWidth}
                       onChange={(e) => handleOptionChange('borderWidth', parseInt(e.target.value))}
                     />
