@@ -307,6 +307,9 @@ body {
 /* Correction pour que le slider aille bien jusqu'au bout */
 .form-group input[type="range"] {
   width: 100%;
+  margin: 10px 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 
