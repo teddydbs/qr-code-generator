@@ -52,19 +52,19 @@ function QrGenerator() {
   const generateQRContent = () => {
     switch (activeTab) {
       case 'url':
-        return formData.url
+        return formData.url || ''
       case 'wifi':
-        return `WIFI:T:${formData.wifi.security};S:${formData.wifi.ssid};P:${formData.wifi.password};;`
+        return `WIFI:T:${formData.wifi.security || 'WPA'};S:${formData.wifi.ssid || ''};P:${formData.wifi.password || ''};;`
       case 'email':
-        return `mailto:${formData.email.email}?subject=${encodeURIComponent(formData.email.subject)}&body=${encodeURIComponent(formData.email.body)}`
+        return `mailto:${formData.email.email || ''}?subject=${encodeURIComponent(formData.email.subject || '')}&body=${encodeURIComponent(formData.email.body || '')}`
       case 'sms':
-        return `sms:${formData.sms.phone}?body=${encodeURIComponent(formData.sms.message)}`
+        return `sms:${formData.sms.phone || ''}?body=${encodeURIComponent(formData.sms.message || '')}`
       case 'tel':
-        return `tel:${formData.tel.phone}`
+        return `tel:${formData.tel.phone || ''}`
       case 'vcard':
-        return `BEGIN:VCARD\nVERSION:3.0\nFN:${formData.vcard.firstName} ${formData.vcard.lastName}\nORG:${formData.vcard.organization}\nTEL:${formData.vcard.phone}\nEMAIL:${formData.vcard.email}\nEND:VCARD`
+        return `BEGIN:VCARD\nVERSION:3.0\nFN:${formData.vcard.firstName || ''} ${formData.vcard.lastName || ''}\nORG:${formData.vcard.organization || ''}\nTEL:${formData.vcard.phone || ''}\nEMAIL:${formData.vcard.email || ''}\nEND:VCARD`
       default:
-        return formData.url
+        return formData.url || ''
     }
   }
 
@@ -831,7 +831,7 @@ function QrGenerator() {
       <div className="action-buttons">
         <button 
           onClick={handleGenerate}
-          disabled={!generateQRContent().trim()}
+          disabled={!generateQRContent()?.trim()}
           className="generate-btn"
         >
           Générer le QR Code
