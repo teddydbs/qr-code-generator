@@ -204,7 +204,7 @@ function QrGenerator() {
     backgroundColorConfig
   ])
 
-  // Debounce pour la taille - Évite les mises à jour trop fréquentes
+  // Debounce pour la taille - Délai réduit pour plus de réactivité
   useEffect(() => {
     if (qrCode.current) {
       const timeoutId = setTimeout(() => {
@@ -212,20 +212,20 @@ function QrGenerator() {
           width: options.size,
           height: options.size
         })
-      }, 100) // Attendre 100ms après le dernier changement
+      }, 20) // Délai très court pour voir les changements rapidement
 
       return () => clearTimeout(timeoutId)
     }
   }, [options.size])
 
-  // Debounce pour la marge - Évite les mises à jour trop fréquentes
+  // Debounce pour la marge - Délai réduit pour plus de réactivité
   useEffect(() => {
     if (qrCode.current) {
       const timeoutId = setTimeout(() => {
         qrCode.current.update({
           margin: options.margin
         })
-      }, 100) // Attendre 100ms après le dernier changement
+      }, 20) // Délai très court pour voir les changements rapidement
 
       return () => clearTimeout(timeoutId)
     }
