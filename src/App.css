@@ -179,7 +179,7 @@ body {
   color: #1d1d1f;
   transition: all 0.2s ease;
   font-family: inherit;
-  resize: vertical;
+  resize: none;
   min-height: 80px;
 }
 

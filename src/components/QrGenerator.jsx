@@ -376,7 +376,8 @@ function QrGenerator() {
                       value={formData.email.body}
                       onChange={(e) => handleFormChange('body', e.target.value)}
                       placeholder="Votre message..."
-                      rows="3"
+                      rows="5"
+                      style={{ resize: 'none' }}
                     />
                   </div>
                 </>
@@ -401,7 +402,8 @@ function QrGenerator() {
                       value={formData.sms.message}
                       onChange={(e) => handleFormChange('message', e.target.value)}
                       placeholder="Votre message SMS..."
-                      rows="3"
+                      rows="4"
+                      style={{ resize: 'none' }}
                     />
                   </div>
                 </>
