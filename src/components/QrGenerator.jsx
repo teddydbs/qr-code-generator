@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import QRCodeStyling from 'qr-code-styling'
+import html2canvas from 'html2canvas'
 
 function QrGenerator() {
   const [activeTab, setActiveTab] = useState('url')
@@ -253,17 +254,33 @@ function QrGenerator() {
 
 
   const handleDownloadPng = async () => {
-    if (qrCode.current === null) {
+    if (!qrRef.current) {
       return
     }
 
     try {
-      await qrCode.current.download({
-        name: `qrcode-${Date.now()}`,
-        extension: 'png'
+      // Capturer le conteneur complet avec les bordures CSS
+      const canvas = await html2canvas(qrRef.current, {
+        backgroundColor: null,
+        scale: 2, // Haute résolution
+        useCORS: true,
+        allowTaint: true
       })
+      
+      // Créer un lien de téléchargement
+      const link = document.createElement('a')
+      link.download = `qrcode-${Date.now()}.png`
+      link.href = canvas.toDataURL('image/png')
+      link.click()
     } catch (err) {
       console.error('Erreur lors du téléchargement PNG:', err)
+      // Fallback vers la méthode originale
+      if (qrCode.current) {
+        await qrCode.current.download({
+          name: `qrcode-${Date.now()}`,
+          extension: 'png'
+        })
+      }
     }
   }
 
