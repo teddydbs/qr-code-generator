@@ -76,13 +76,22 @@ function QrGenerator() {
   }
 
   const handleFormChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [activeTab]: {
-        ...prev[activeTab],
-        [field]: value
-      }
-    }))
+    if (activeTab === 'url') {
+      // Pour URL, on met à jour directement la string
+      setFormData(prev => ({
+        ...prev,
+        url: value
+      }))
+    } else {
+      // Pour les autres tabs, on met à jour l'objet
+      setFormData(prev => ({
+        ...prev,
+        [activeTab]: {
+          ...prev[activeTab],
+          [field]: value
+        }
+      }))
+    }
   }
 
   const handleOptionChange = (option, newValue) => {
@@ -295,7 +304,7 @@ function QrGenerator() {
                     id="url-input"
                     type="url"
                     value={formData.url}
-                    onChange={(e) => handleFormChange('url', e.target.value)}
+                    onChange={(e) => handleFormChange('', e.target.value)}
                     placeholder="https://example.com"
                   />
                 </div>
