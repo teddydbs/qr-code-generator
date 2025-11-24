@@ -172,15 +172,13 @@ function QrGenerator() {
     }
   }, [])
 
-  // Mettre à jour le QR code
+  // Mettre à jour le QR code - Changements lourds (contenu, couleurs, styles)
   useEffect(() => {
     if (qrCode.current) {
       const dotsColorConfig = getDotsColorConfig()
       const backgroundColorConfig = getBackgroundColorConfig()
       
       qrCode.current.update({
-        width: options.size,
-        height: options.size,
         data: generatedValue,
         margin: options.margin,
         dotsOptions: {
@@ -201,7 +199,34 @@ function QrGenerator() {
         }
       })
     }
-  }, [generatedValue, options])
+  }, [
+    generatedValue, 
+    options.margin,
+    options.fgColor,
+    options.bgColor,
+    options.dotsType,
+    options.cornersSquareType,
+    options.cornersDotType,
+    options.dotsGradientType,
+    options.dotsGradientColor1,
+    options.dotsGradientColor2,
+    options.cornersSquareColor,
+    options.cornersDotColor,
+    options.backgroundGradientType,
+    options.backgroundGradientColor1,
+    options.backgroundGradientColor2,
+    options.errorCorrectionLevel
+  ])
+
+  // Mettre à jour la taille seulement - Changement léger et fluide
+  useEffect(() => {
+    if (qrCode.current) {
+      qrCode.current.update({
+        width: options.size,
+        height: options.size
+      })
+    }
+  }, [options.size])
 
 
   const handleDownloadPng = async () => {
