@@ -810,7 +810,7 @@ function QrGenerator() {
                   id="margin"
                   type="range"
                   min="0"
-                  max="100"
+                  max="50"
                   value={options.margin}
                   onChange={(e) => handleOptionChange('margin', parseInt(e.target.value))}
                 />
