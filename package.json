@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "html-to-image": "^1.11.13",
+    "qr-border-plugin": "^0.1.1",
     "qr-code-styling": "^1.9.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

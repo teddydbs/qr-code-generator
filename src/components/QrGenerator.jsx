@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import QRCodeStyling from 'qr-code-styling'
+import QRBorderPlugin from 'qr-border-plugin'
 
 function QrGenerator() {
   const [activeTab, setActiveTab] = useState('url')
@@ -13,18 +14,36 @@ function QrGenerator() {
   })
   const [generatedValue, setGeneratedValue] = useState('https://example.com')
   const [options, setOptions] = useState({
-    size: 256,
+    size: 300,
+    margin: 0,
     fgColor: '#000000',
-    bgColor: '#FFFFFF',
+    bgColor: '#ffffff',
     dotsType: 'square',
     cornersSquareType: 'square',
     cornersDotType: 'square',
-    frame: 'none',
-    frameColor: '#000000',
-    frameText: 'SCAN ME',
-    gradientType: 'none',
-    gradientColor1: '#000000',
-    gradientColor2: '#007aff'
+    
+    // Options de dégradé pour les points
+    dotsGradientType: 'none',
+    dotsGradientColor1: '#000000',
+    dotsGradientColor2: '#007aff',
+    
+    // Options de couleur pour les coins
+    cornersSquareColor: '#000000',
+    cornersDotColor: '#000000',
+    
+    // Options de fond avancées
+    backgroundGradientType: 'none',
+    backgroundGradientColor1: '#ffffff',
+    backgroundGradientColor2: '#f0f0f0',
+    
+    // Options de cadre avec le plugin
+    borderType: 'none',
+    borderColor: '#000000',
+    borderWidth: 10,
+    borderText: 'SCAN ME',
+    
+    // Options QR techniques
+    errorCorrectionLevel: 'M'
   })
   const qrRef = useRef(null)
   const qrCode = useRef(null)
@@ -73,18 +92,35 @@ function QrGenerator() {
     }))
   }
 
-  // Fonction pour obtenir la configuration des couleurs
-  const getColorConfig = () => {
-    if (options.gradientType === 'none') {
+  // Fonctions pour obtenir les configurations de couleurs
+  const getDotsColorConfig = () => {
+    if (options.dotsGradientType === 'none') {
       return { color: options.fgColor }
     } else {
       return {
         gradient: {
-          type: options.gradientType,
+          type: options.dotsGradientType,
           rotation: 0,
           colorStops: [
-            { offset: 0, color: options.gradientColor1 },
-            { offset: 1, color: options.gradientColor2 }
+            { offset: 0, color: options.dotsGradientColor1 },
+            { offset: 1, color: options.dotsGradientColor2 }
+          ]
+        }
+      }
+    }
+  }
+
+  const getBackgroundColorConfig = () => {
+    if (options.backgroundGradientType === 'none') {
+      return { color: options.bgColor }
+    } else {
+      return {
+        gradient: {
+          type: options.backgroundGradientType,
+          rotation: 0,
+          colorStops: [
+            { offset: 0, color: options.backgroundGradientColor1 },
+            { offset: 1, color: options.backgroundGradientColor2 }
           ]
         }
       }
@@ -92,31 +128,50 @@ function QrGenerator() {
   }
 
 
-  // Initialiser le QR code
+  // Initialiser le QR code avec les nouvelles options
   useEffect(() => {
-    const colorConfig = getColorConfig()
+    const dotsColorConfig = getDotsColorConfig()
+    const backgroundColorConfig = getBackgroundColorConfig()
     
-    qrCode.current = new QRCodeStyling({
+    const qrConfig = {
       width: options.size,
       height: options.size,
       data: generatedValue,
-      margin: options.frame !== 'none' ? 20 : 0,
+      margin: options.margin,
       dotsOptions: {
-        ...colorConfig,
+        ...dotsColorConfig,
         type: options.dotsType
       },
-      backgroundOptions: {
-        color: options.bgColor
-      },
+      backgroundOptions: backgroundColorConfig,
       cornersSquareOptions: {
         type: options.cornersSquareType,
-        color: options.fgColor
+        color: options.cornersSquareColor
       },
       cornersDotOptions: {
         type: options.cornersDotType,
-        color: options.fgColor
+        color: options.cornersDotColor
+      },
+      qrOptions: {
+        errorCorrectionLevel: options.errorCorrectionLevel
       }
-    })
+    }
+
+    qrCode.current = new QRCodeStyling(qrConfig)
+
+    // Ajouter le plugin de cadres si nécessaire
+    if (options.borderType !== 'none') {
+      try {
+        const borderPlugin = new QRBorderPlugin({
+          type: options.borderType,
+          color: options.borderColor,
+          width: options.borderWidth,
+          text: options.borderText
+        })
+        qrCode.current.use(borderPlugin)
+      } catch (error) {
+        console.warn('Border plugin error:', error)
+      }
+    }
 
     if (qrRef.current) {
       qrRef.current.innerHTML = ''
@@ -127,27 +182,29 @@ function QrGenerator() {
   // Mettre à jour le QR code
   useEffect(() => {
     if (qrCode.current) {
-      const colorConfig = getColorConfig()
+      const dotsColorConfig = getDotsColorConfig()
+      const backgroundColorConfig = getBackgroundColorConfig()
       
       qrCode.current.update({
         width: options.size,
         height: options.size,
         data: generatedValue,
-        margin: options.frame !== 'none' ? 20 : 0,
+        margin: options.margin,
         dotsOptions: {
-          ...colorConfig,
+          ...dotsColorConfig,
           type: options.dotsType
         },
-        backgroundOptions: {
-          color: options.bgColor
-        },
+        backgroundOptions: backgroundColorConfig,
         cornersSquareOptions: {
           type: options.cornersSquareType,
-          color: options.fgColor
+          color: options.cornersSquareColor
         },
         cornersDotOptions: {
           type: options.cornersDotType,
-          color: options.fgColor
+          color: options.cornersDotColor
+        },
+        qrOptions: {
+          errorCorrectionLevel: options.errorCorrectionLevel
         }
       })
     }
@@ -537,106 +594,211 @@ function QrGenerator() {
               </div>
 
               <div className="form-group">
-                <label>Cadre :</label>
+                <label>Cadre (Plugin) :</label>
                 <div className="button-group">
                   <button 
                     type="button"
-                    className={`option-btn ${options.frame === 'none' ? 'active' : ''}`}
-                    onClick={() => handleOptionChange('frame', 'none')}
+                    className={`option-btn ${options.borderType === 'none' ? 'active' : ''}`}
+                    onClick={() => handleOptionChange('borderType', 'none')}
                   >
                     Aucun
                   </button>
                   <button 
                     type="button"
-                    className={`option-btn ${options.frame === 'scan-me' ? 'active' : ''}`}
-                    onClick={() => handleOptionChange('frame', 'scan-me')}
+                    className={`option-btn ${options.borderType === 'simple' ? 'active' : ''}`}
+                    onClick={() => handleOptionChange('borderType', 'simple')}
                   >
-                    SCAN ME
+                    Simple
                   </button>
                   <button 
                     type="button"
-                    className={`option-btn ${options.frame === 'border' ? 'active' : ''}`}
-                    onClick={() => handleOptionChange('frame', 'border')}
+                    className={`option-btn ${options.borderType === 'rounded' ? 'active' : ''}`}
+                    onClick={() => handleOptionChange('borderType', 'rounded')}
                   >
-                    Bordure
+                    Arrondi
                   </button>
                 </div>
               </div>
 
-              {options.frame !== 'none' && (
-                <div className="form-group">
-                  <label htmlFor="frame-color">Couleur du cadre :</label>
-                  <input
-                    id="frame-color"
-                    type="color"
-                    value={options.frameColor}
-                    onChange={(e) => handleOptionChange('frameColor', e.target.value)}
-                  />
-                </div>
-              )}
-
-              {options.frame === 'scan-me' && (
-                <div className="form-group">
-                  <label htmlFor="frame-text">Texte du cadre :</label>
-                  <input
-                    id="frame-text"
-                    type="text"
-                    value={options.frameText}
-                    onChange={(e) => handleOptionChange('frameText', e.target.value)}
-                    placeholder="SCAN ME"
-                  />
-                </div>
+              {options.borderType !== 'none' && (
+                <>
+                  <div className="form-group">
+                    <label htmlFor="border-color">Couleur du cadre :</label>
+                    <input
+                      id="border-color"
+                      type="color"
+                      value={options.borderColor}
+                      onChange={(e) => handleOptionChange('borderColor', e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="border-width">Largeur du cadre :</label>
+                    <input
+                      id="border-width"
+                      type="range"
+                      min="5"
+                      max="30"
+                      value={options.borderWidth}
+                      onChange={(e) => handleOptionChange('borderWidth', parseInt(e.target.value))}
+                    />
+                    <span>{options.borderWidth}px</span>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="border-text">Texte du cadre :</label>
+                    <input
+                      id="border-text"
+                      type="text"
+                      value={options.borderText}
+                      onChange={(e) => handleOptionChange('borderText', e.target.value)}
+                      placeholder="SCAN ME"
+                    />
+                  </div>
+                </>
               )}
 
               <div className="form-group">
-                <label>Type de dégradé :</label>
+                <label>Dégradé des points :</label>
                 <div className="button-group">
                   <button 
                     type="button"
-                    className={`option-btn ${options.gradientType === 'none' ? 'active' : ''}`}
-                    onClick={() => handleOptionChange('gradientType', 'none')}
+                    className={`option-btn ${options.dotsGradientType === 'none' ? 'active' : ''}`}
+                    onClick={() => handleOptionChange('dotsGradientType', 'none')}
                   >
                     Couleur unie
                   </button>
                   <button 
                     type="button"
-                    className={`option-btn ${options.gradientType === 'linear' ? 'active' : ''}`}
-                    onClick={() => handleOptionChange('gradientType', 'linear')}
+                    className={`option-btn ${options.dotsGradientType === 'linear' ? 'active' : ''}`}
+                    onClick={() => handleOptionChange('dotsGradientType', 'linear')}
                   >
                     Dégradé linéaire
                   </button>
                   <button 
                     type="button"
-                    className={`option-btn ${options.gradientType === 'radial' ? 'active' : ''}`}
-                    onClick={() => handleOptionChange('gradientType', 'radial')}
+                    className={`option-btn ${options.dotsGradientType === 'radial' ? 'active' : ''}`}
+                    onClick={() => handleOptionChange('dotsGradientType', 'radial')}
                   >
                     Dégradé radial
                   </button>
                 </div>
               </div>
 
-              {options.gradientType !== 'none' && (
+              {options.dotsGradientType !== 'none' && (
                 <>
                   <div className="form-group">
-                    <label htmlFor="gradient-color1">Couleur 1 :</label>
+                    <label htmlFor="dots-gradient-color1">Couleur 1 :</label>
                     <input
-                      id="gradient-color1"
+                      id="dots-gradient-color1"
                       type="color"
-                      value={options.gradientColor1}
-                      onChange={(e) => handleOptionChange('gradientColor1', e.target.value)}
+                      value={options.dotsGradientColor1}
+                      onChange={(e) => handleOptionChange('dotsGradientColor1', e.target.value)}
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="gradient-color2">Couleur 2 :</label>
+                    <label htmlFor="dots-gradient-color2">Couleur 2 :</label>
                     <input
-                      id="gradient-color2"
+                      id="dots-gradient-color2"
                       type="color"
-                      value={options.gradientColor2}
-                      onChange={(e) => handleOptionChange('gradientColor2', e.target.value)}
+                      value={options.dotsGradientColor2}
+                      onChange={(e) => handleOptionChange('dotsGradientColor2', e.target.value)}
                     />
                   </div>
                 </>
               )}
+
+              {/* Nouvelles options pour les couleurs des coins */}
+              <div className="form-group">
+                <label htmlFor="corners-square-color">Couleur coins carrés :</label>
+                <input
+                  id="corners-square-color"
+                  type="color"
+                  value={options.cornersSquareColor}
+                  onChange={(e) => handleOptionChange('cornersSquareColor', e.target.value)}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="corners-dot-color">Couleur points des coins :</label>
+                <input
+                  id="corners-dot-color"
+                  type="color"
+                  value={options.cornersDotColor}
+                  onChange={(e) => handleOptionChange('cornersDotColor', e.target.value)}
+                />
+              </div>
+
+              {/* Options de fond avancées */}
+              <div className="form-group">
+                <label>Dégradé de fond :</label>
+                <div className="button-group">
+                  <button 
+                    type="button"
+                    className={`option-btn ${options.backgroundGradientType === 'none' ? 'active' : ''}`}
+                    onClick={() => handleOptionChange('backgroundGradientType', 'none')}
+                  >
+                    Couleur unie
+                  </button>
+                  <button 
+                    type="button"
+                    className={`option-btn ${options.backgroundGradientType === 'linear' ? 'active' : ''}`}
+                    onClick={() => handleOptionChange('backgroundGradientType', 'linear')}
+                  >
+                    Dégradé
+                  </button>
+                </div>
+              </div>
+
+              {options.backgroundGradientType !== 'none' && (
+                <>
+                  <div className="form-group">
+                    <label htmlFor="bg-gradient-color1">Couleur fond 1 :</label>
+                    <input
+                      id="bg-gradient-color1"
+                      type="color"
+                      value={options.backgroundGradientColor1}
+                      onChange={(e) => handleOptionChange('backgroundGradientColor1', e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="bg-gradient-color2">Couleur fond 2 :</label>
+                    <input
+                      id="bg-gradient-color2"
+                      type="color"
+                      value={options.backgroundGradientColor2}
+                      onChange={(e) => handleOptionChange('backgroundGradientColor2', e.target.value)}
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* Option de marge */}
+              <div className="form-group">
+                <label htmlFor="margin">Marge :</label>
+                <input
+                  id="margin"
+                  type="range"
+                  min="0"
+                  max="50"
+                  value={options.margin}
+                  onChange={(e) => handleOptionChange('margin', parseInt(e.target.value))}
+                />
+                <span>{options.margin}px</span>
+              </div>
+
+              {/* Options QR techniques */}
+              <div className="form-group">
+                <label htmlFor="error-correction">Correction d'erreur :</label>
+                <select
+                  id="error-correction"
+                  value={options.errorCorrectionLevel}
+                  onChange={(e) => handleOptionChange('errorCorrectionLevel', e.target.value)}
+                >
+                  <option value="L">Faible (L)</option>
+                  <option value="M">Moyen (M)</option>
+                  <option value="Q">Élevé (Q)</option>
+                  <option value="H">Maximum (H)</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
