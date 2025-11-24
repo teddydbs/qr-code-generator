@@ -836,13 +836,6 @@ function QrGenerator() {
                   </button>
                   <button 
                     type="button"
-                    className={`option-btn ${options.margin === 5 ? 'active' : ''}`}
-                    onClick={() => handleOptionChange('margin', 5)}
-                  >
-                    Très petite
-                  </button>
-                  <button 
-                    type="button"
                     className={`option-btn ${options.margin === 10 ? 'active' : ''}`}
                     onClick={() => handleOptionChange('margin', 10)}
                   >
@@ -850,17 +843,24 @@ function QrGenerator() {
                   </button>
                   <button 
                     type="button"
-                    className={`option-btn ${options.margin === 25 ? 'active' : ''}`}
-                    onClick={() => handleOptionChange('margin', 25)}
+                    className={`option-btn ${options.margin === 20 ? 'active' : ''}`}
+                    onClick={() => handleOptionChange('margin', 20)}
                   >
                     Moyenne
+                  </button>
+                  <button 
+                    type="button"
+                    className={`option-btn ${options.margin === 35 ? 'active' : ''}`}
+                    onClick={() => handleOptionChange('margin', 35)}
+                  >
+                    Grande
                   </button>
                   <button 
                     type="button"
                     className={`option-btn ${options.margin === 50 ? 'active' : ''}`}
                     onClick={() => handleOptionChange('margin', 50)}
                   >
-                    Grande
+                    Très grande
                   </button>
                 </div>
               </div>
