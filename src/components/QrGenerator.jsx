@@ -174,7 +174,6 @@ function QrGenerator() {
     if (qrCode.current) {
       qrCode.current.update({
         data: generatedValue,
-        margin: options.margin,
         dotsOptions: {
           ...dotsColorConfig,
           type: options.dotsType
@@ -195,7 +194,6 @@ function QrGenerator() {
     }
   }, [
     generatedValue, 
-    options.margin,
     options.dotsType,
     options.cornersSquareType,
     options.cornersDotType,
@@ -219,6 +217,19 @@ function QrGenerator() {
       return () => clearTimeout(timeoutId)
     }
   }, [options.size])
+
+  // Debounce pour la marge - Évite les mises à jour trop fréquentes
+  useEffect(() => {
+    if (qrCode.current) {
+      const timeoutId = setTimeout(() => {
+        qrCode.current.update({
+          margin: options.margin
+        })
+      }, 100) // Attendre 100ms après le dernier changement
+
+      return () => clearTimeout(timeoutId)
+    }
+  }, [options.margin])
 
 
   const handleDownloadPng = async () => {
