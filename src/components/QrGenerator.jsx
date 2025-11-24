@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react'
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import QRCodeStyling from 'qr-code-styling'
 
 function QrGenerator() {
@@ -206,13 +206,17 @@ function QrGenerator() {
     backgroundColorConfig
   ])
 
-  // Mettre à jour la taille seulement - Changement léger et fluide
+  // Debounce pour la taille - Évite les mises à jour trop fréquentes
   useEffect(() => {
     if (qrCode.current) {
-      qrCode.current.update({
-        width: options.size,
-        height: options.size
-      })
+      const timeoutId = setTimeout(() => {
+        qrCode.current.update({
+          width: options.size,
+          height: options.size
+        })
+      }, 100) // Attendre 100ms après le dernier changement
+
+      return () => clearTimeout(timeoutId)
     }
   }, [options.size])
 
