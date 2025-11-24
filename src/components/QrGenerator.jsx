@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
 import QRCodeStyling from 'qr-code-styling'
-import QRBorderPlugin from 'qr-border-plugin'
 
 function QrGenerator() {
   const [activeTab, setActiveTab] = useState('url')
@@ -166,21 +165,6 @@ function QrGenerator() {
     }
 
     qrCode.current = new QRCodeStyling(qrConfig)
-
-    // Ajouter le plugin de cadres si nécessaire
-    if (options.borderType !== 'none') {
-      try {
-        const borderPlugin = new QRBorderPlugin({
-          type: options.borderType,
-          color: options.borderColor,
-          width: options.borderWidth,
-          text: options.borderText
-        })
-        qrCode.current.use(borderPlugin)
-      } catch (error) {
-        console.warn('Border plugin error:', error)
-      }
-    }
 
     if (qrRef.current) {
       qrRef.current.innerHTML = ''
@@ -605,7 +589,7 @@ function QrGenerator() {
               </div>
 
               <div className="form-group">
-                <label>Cadre (Plugin) :</label>
+                <label>Cadre CSS :</label>
                 <div className="button-group">
                   <button 
                     type="button"
@@ -616,17 +600,24 @@ function QrGenerator() {
                   </button>
                   <button 
                     type="button"
-                    className={`option-btn ${options.borderType === 'simple' ? 'active' : ''}`}
-                    onClick={() => handleOptionChange('borderType', 'simple')}
+                    className={`option-btn ${options.borderType === 'solid' ? 'active' : ''}`}
+                    onClick={() => handleOptionChange('borderType', 'solid')}
                   >
-                    Simple
+                    Bordure
                   </button>
                   <button 
                     type="button"
-                    className={`option-btn ${options.borderType === 'rounded' ? 'active' : ''}`}
-                    onClick={() => handleOptionChange('borderType', 'rounded')}
+                    className={`option-btn ${options.borderType === 'shadow' ? 'active' : ''}`}
+                    onClick={() => handleOptionChange('borderType', 'shadow')}
                   >
-                    Arrondi
+                    Ombre
+                  </button>
+                  <button 
+                    type="button"
+                    className={`option-btn ${options.borderType === 'text' ? 'active' : ''}`}
+                    onClick={() => handleOptionChange('borderType', 'text')}
+                  >
+                    Avec texte
                   </button>
                 </div>
               </div>
@@ -647,23 +638,25 @@ function QrGenerator() {
                     <input
                       id="border-width"
                       type="range"
-                      min="5"
-                      max="30"
+                      min="2"
+                      max="10"
                       value={options.borderWidth}
                       onChange={(e) => handleOptionChange('borderWidth', parseInt(e.target.value))}
                     />
                     <span>{options.borderWidth}px</span>
                   </div>
-                  <div className="form-group">
-                    <label htmlFor="border-text">Texte du cadre :</label>
-                    <input
-                      id="border-text"
-                      type="text"
-                      value={options.borderText}
-                      onChange={(e) => handleOptionChange('borderText', e.target.value)}
-                      placeholder="SCAN ME"
-                    />
-                  </div>
+                  {options.borderType === 'text' && (
+                    <div className="form-group">
+                      <label htmlFor="border-text">Texte du cadre :</label>
+                      <input
+                        id="border-text"
+                        type="text"
+                        value={options.borderText}
+                        onChange={(e) => handleOptionChange('borderText', e.target.value)}
+                        placeholder="SCAN ME"
+                      />
+                    </div>
+                  )}
                 </>
               )}
 
@@ -820,10 +813,13 @@ function QrGenerator() {
               <div className="qr-content-wrapper">
                 <p>QR Code pour : <strong>{generatedValue}</strong></p>
                 <div 
-                  className={`qr-code-container ${options.frame !== 'none' ? `frame-${options.frame}` : ''}`}
+                  className={`qr-code-container ${options.borderType !== 'none' ? `border-${options.borderType}` : ''}`}
                   ref={qrRef}
-                  data-frame-text={options.frameText}
-                  style={{ '--frame-color': options.frameColor }}
+                  data-border-text={options.borderText}
+                  style={{ 
+                    '--border-color': options.borderColor,
+                    '--border-width': `${options.borderWidth}px`
+                  }}
                   role="img"
                   aria-label={`QR Code pour ${generatedValue}`}
                 >
