@@ -268,13 +268,40 @@ body {
 }
 
 .form-group input[type="color"] {
-  width: 80px;
-  height: 50px;
+  width: 60px;
+  height: 40px;
   padding: 0;
   border: 2px solid #e5e5e7;
-  border-radius: 12px;
+  border-radius: 8px;
   cursor: pointer;
   background: none;
+  overflow: hidden;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.form-group input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+}
+
+.form-group input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 6px;
+  box-shadow: none;
+}
+
+.form-group input[type="color"]::-moz-color-swatch {
+  border: none;
+  border-radius: 6px;
+}
+
+.form-group input[type="color"]:focus {
+  outline: none;
+  border-color: #007aff;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
 }
 
 .form-group input::placeholder {
