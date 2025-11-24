@@ -218,16 +218,12 @@ function QrGenerator() {
     }
   }, [options.size])
 
-  // Debounce pour la marge - Délai réduit pour plus de réactivité
+  // Mise à jour immédiate de la marge - Sans debounce pour test
   useEffect(() => {
     if (qrCode.current) {
-      const timeoutId = setTimeout(() => {
-        qrCode.current.update({
-          margin: options.margin
-        })
-      }, 20) // Délai très court pour voir les changements rapidement
-
-      return () => clearTimeout(timeoutId)
+      qrCode.current.update({
+        margin: options.margin
+      })
     }
   }, [options.margin])
 
