@@ -825,16 +825,37 @@ function QrGenerator() {
 
               {/* Option de marge */}
               <div className="form-group">
-                <label htmlFor="margin">Marge :</label>
-                <input
-                  id="margin"
-                  type="range"
-                  min="0"
-                  max="50"
-                  value={options.margin}
-                  onChange={(e) => handleOptionChange('margin', parseInt(e.target.value))}
-                />
-                <span>{options.margin}px</span>
+                <label>Marge :</label>
+                <div className="button-group">
+                  <button 
+                    type="button"
+                    className={`option-btn ${options.margin === 0 ? 'active' : ''}`}
+                    onClick={() => handleOptionChange('margin', 0)}
+                  >
+                    Aucune (0px)
+                  </button>
+                  <button 
+                    type="button"
+                    className={`option-btn ${options.margin === 10 ? 'active' : ''}`}
+                    onClick={() => handleOptionChange('margin', 10)}
+                  >
+                    Petite (10px)
+                  </button>
+                  <button 
+                    type="button"
+                    className={`option-btn ${options.margin === 25 ? 'active' : ''}`}
+                    onClick={() => handleOptionChange('margin', 25)}
+                  >
+                    Moyenne (25px)
+                  </button>
+                  <button 
+                    type="button"
+                    className={`option-btn ${options.margin === 50 ? 'active' : ''}`}
+                    onClick={() => handleOptionChange('margin', 50)}
+                  >
+                    Grande (50px)
+                  </button>
+                </div>
               </div>
 
               {/* Options QR techniques */}
